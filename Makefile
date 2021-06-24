@@ -1,6 +1,6 @@
 #!/usr/bin/make
 
-VERSION := v0.0.4-p9fix0
+VERSION := v0.0.4
 BINNAME := terraform-provider-discord_$(VERSION)
 ARCH    := darwin_arm64
 KEYNAME := terraform
