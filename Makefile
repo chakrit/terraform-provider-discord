@@ -1,22 +1,27 @@
 #!/usr/bin/make
 
-VERSION := v0.0.4
-BINNAME := terraform-provider-discord_$(VERSION)
+VERSION := 0.0.4
 ARCH    := darwin_arm64
+NAME    := discord
 KEYNAME := terraform
+
+BINNAME := terraform-provider-$(NAME)_v$(VERSION)
+ZIPNAME := terraform-provider-$(NAME)_$(VERSION).zip
+SUMNAME := terraform-provider-$(NAME)_$(VERSION)_SHA256SUMS
+SIGNAME := terraform-provider-$(NAME)_$(VERSION)_SHA256SUMS.sig
 
 default: bin zip shasum sig
 bin: $(BINNAME)
-zip: $(BINNAME)_$(ARCH).zip
-shasum: $(BINNAME)_SHA256SUMS
-sig: $(BINNAME)_SHA256SUMS.sig
+zip: $(ZIPNAME)
+shasum: $(SUMNAME)
+sig: $(SIGNAME)
 
 $(BINNAME):
 	go build -o $@
-$(BINNAME)_$(ARCH).zip:
-	zip "$@" $(BINNAME)
-$(BINNAME)_SHA256SUMS:
-	shasum -a 256 *.zip > "$@"
-$(BINNAME)_SHA256SUMS.sig: $(BINNAME)_SHA256SUMS
+$(ZIPNAME): $(BINNAME)
+	zip "$@" "$<"
+$(SUMNAME): $(ZIPNAME)
+	shasum -a 256 "$<" > "$@"
+$(SIGNAME): $(SUMNAME)
 	gpg --default-key "$(KEYNAME)" --detach-sign "$<"
 
