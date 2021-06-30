@@ -5,10 +5,10 @@ ARCH    := darwin_arm64
 NAME    := discord
 KEYNAME := terraform
 
-BINNAME := terraform-provider-$(NAME)_v$(VERSION)
-ZIPNAME := terraform-provider-$(NAME)_$(VERSION).zip
-SUMNAME := terraform-provider-$(NAME)_$(VERSION)_SHA256SUMS
-SIGNAME := terraform-provider-$(NAME)_$(VERSION)_SHA256SUMS.sig
+BINNAME  := terraform-provider-$(NAME)_v$(VERSION)
+ZIPNAME  := terraform-provider-$(NAME)_$(VERSION)_$(ARCH).zip
+SUMNAME  := terraform-provider-$(NAME)_$(VERSION)_SHA256SUMS
+SIGNAME  := terraform-provider-$(NAME)_$(VERSION)_SHA256SUMS.sig
 
 default: bin zip shasum sig
 bin: $(BINNAME)
