@@ -8,7 +8,6 @@ A resource to create a Category channel
 resource discord_category_channel chatting {
   name = "Chatting"
   server_id = var.server_id
-  position = 0
 }
 ```
 
@@ -16,7 +15,6 @@ resource discord_category_channel chatting {
 
 * `name` (Required) Name of the category
 * `server_id` (Required) ID of server this category is in
-* `position` (Optional) Position of the channel, 0-indexed
 
 ## Attribute Reference
 

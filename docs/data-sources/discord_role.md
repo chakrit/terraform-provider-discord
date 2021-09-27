@@ -28,7 +28,6 @@ output mods_color {
 ## Attribute Reference
 
 * `id` The id of the role
-* `position` Position of the role. This is reverse-indexed. the `@everyone` role is 0
 * `color` The integer representation of the role's color
 * `permissions` The permission bits of the role
 * `hoist` Whether the role is hoisted

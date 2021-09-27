@@ -12,7 +12,6 @@ resource discord_role moderator {
     color = data.discord_color.blue.dec
     hoist = true
     mentionable = true
-    position = 5
 }
 ```
 
@@ -24,7 +23,6 @@ resource discord_role moderator {
 * `color` (Optional) The integer representation of the role color
 * `hoist` (Optional) Whether the role should be hoisted (default false)
 * `mentionable` (Optional) Whether the role should be mentionable (default false)
-* `position` (Optional) The position of the role. This is reverse indexed (@everyone is 0)
 
 ## Attribute Reference
 
