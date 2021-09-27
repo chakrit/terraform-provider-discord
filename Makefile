@@ -1,6 +1,6 @@
 #!/usr/bin/make
 
-VERSION := 0.0.1
+VERSION := 0.0.2
 ARCH    := darwin_arm64
 NAME    := discord
 KEYNAME := terraform
