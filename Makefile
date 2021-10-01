@@ -5,6 +5,8 @@ ARCH    := darwin_arm64
 NAME    := discord
 KEYNAME := terraform
 
+SRCFILES := main.go $(wildcard **/*.go)
+
 BINNAME  := terraform-provider-$(NAME)_v$(VERSION)
 ZIPNAME  := terraform-provider-$(NAME)_$(VERSION)_$(ARCH).zip
 SUMNAME  := terraform-provider-$(NAME)_$(VERSION)_SHA256SUMS
@@ -16,7 +18,7 @@ zip: $(ZIPNAME)
 shasum: $(SUMNAME)
 sig: $(SIGNAME)
 
-$(BINNAME):
+$(BINNAME): $(SRCFILES)
 	go build -o $@
 $(ZIPNAME): $(BINNAME)
 	zip "$@" "$<"
