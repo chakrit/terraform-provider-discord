@@ -83,7 +83,7 @@ func resourceRoleCreate(ctx context.Context, d *schema.ResourceData, m interface
 
 	role, err := client.Guild(serverId).CreateRole(&disgord.CreateGuildRoleParams{
 		Name:        d.Get("name").(string),
-		Permissions: uint64(d.Get("permissions").(uint64)),
+		Permissions: fixPermission(d.Get("permissions")),
 		Color:       uint(d.Get("color").(uint)),
 		Hoist:       d.Get("hoist").(bool),
 		Mentionable: d.Get("mentionable").(bool),
@@ -148,7 +148,7 @@ func resourceRoleUpdate(ctx context.Context, d *schema.ResourceData, m interface
 	}
 	builder.SetHoist(d.Get("hoist").(bool))
 	builder.SetMentionable(d.Get("mentionable").(bool))
-	builder.SetPermissions(disgord.PermissionBit(d.Get("permissions").(uint64)))
+	builder.SetPermissions(disgord.PermissionBit(fixPermission(d.Get("permissions"))))
 
 	role, err = builder.Execute()
 	if err != nil {

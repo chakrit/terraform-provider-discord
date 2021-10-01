@@ -74,8 +74,7 @@ func resourceRoleEveryoneUpdate(ctx context.Context, d *schema.ResourceData, m i
 	serverId := getId(d.Get("server_id").(string))
 	d.SetId(serverId.String())
 	builder := client.Guild(serverId).Role(serverId).UpdateBuilder()
-
-	builder.SetPermissions(disgord.PermissionBit(d.Get("permissions").(uint64)))
+	builder.SetPermissions(disgord.PermissionBit(fixPermission(d.Get("permissions"))))
 
 	role, err := builder.Execute()
 	if err != nil {
