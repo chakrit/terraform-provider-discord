@@ -5,7 +5,6 @@ go 1.14
 require (
 	github.com/andersfylling/disgord v0.18.1-0.20200822124930-07799219ff00
 	github.com/bwmarrin/discordgo v0.22.0
-	github.com/davecgh/go-spew v1.1.1
 	github.com/hashicorp/go-cty v1.4.1-0.20200414143053-d3edf31b6320
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.0.1
 	github.com/kr/pretty v0.2.0 // indirect
