@@ -137,8 +137,8 @@ func resourceChannelCreate(ctx context.Context, d *schema.ResourceData, m interf
 		}
 	}
 
-	channel, err := client.CreateGuildChannel(ctx, serverId, d.Get("name").(string), &disgord.CreateGuildChannelParams{
-		Type:      channelTypeInt,
+	channel, err := client.Guild(serverId).CreateChannel(d.Get("name").(string), &disgord.CreateGuildChannelParams{
+		Type:      disgord.ChannelType(channelTypeInt),
 		Topic:     topic,
 		Bitrate:   bitrate,
 		UserLimit: userlimit,
@@ -159,7 +159,7 @@ func resourceChannelCreate(ctx context.Context, d *schema.ResourceData, m interf
 			if channel.ParentID.IsZero() {
 				return append(diags, diag.Errorf("Can't sync permissions with category. Channel (%s) doesn't have a category", channel.ID.String())...)
 			}
-			parent, err := client.GetChannel(ctx, channel.ParentID)
+			parent, err := client.Channel(channel.ParentID).Get()
 			if err != nil {
 				return append(diags, diag.Errorf("Can't sync permissions with category. Channel (%s) doesn't have a category", channel.ID.String())...)
 			}
@@ -177,12 +177,12 @@ func resourceChannelRead(ctx context.Context, d *schema.ResourceData, m interfac
 	var diags diag.Diagnostics
 	client := m.(*Context).Client
 
-	channel, err := client.GetChannel(ctx, getId(d.Id()))
+	channel, err := client.Channel(getId(d.Id())).Get()
 	if err != nil {
 		return diag.Errorf("Failed to fetch channel %s: %e", d.Id(), err.Error())
 	}
 
-	channelType, ok := getTextChannelType(channel.Type)
+	channelType, ok := getTextChannelType(uint(channel.Type))
 	if !ok {
 		return diag.Errorf("Invalid channel type: %d", channel.Type)
 	}
@@ -200,7 +200,7 @@ func resourceChannelRead(ctx context.Context, d *schema.ResourceData, m interfac
 
 	if channelType != "category" {
 		if !channel.ParentID.IsZero() {
-			parent, err := client.GetChannel(ctx, channel.ParentID)
+			parent, err := client.Channel(channel.ParentID).Get()
 			if err != nil {
 				return diag.Errorf("Failed to fetch category of channel %s: %s", channel.ID.String(), err.Error())
 			}
@@ -229,7 +229,7 @@ func resourceChannelUpdate(ctx context.Context, d *schema.ResourceData, m interf
 	}
 
 	channelType := d.Get("type").(string)
-	builder := client.UpdateChannel(ctx, getId(d.Id()))
+	builder := client.Channel(getId(d.Id())).UpdateBuilder()
 
 	if d.HasChange("name") {
 		builder.SetName(d.Get("name").(string))
@@ -254,7 +254,7 @@ func resourceChannelUpdate(ctx context.Context, d *schema.ResourceData, m interf
 		if d.Get("category").(string) != "" {
 			builder.SetParentID(getId(d.Get("category").(string)))
 		} else {
-			builder.RemoveParentID()
+			builder.Set("parent_id", nil)
 		}
 	}
 
@@ -268,7 +268,7 @@ func resourceChannelUpdate(ctx context.Context, d *schema.ResourceData, m interf
 			if channel.ParentID.IsZero() {
 				return append(diags, diag.Errorf("Can't sync permissions with category. Channel (%s) doesn't have a category", channel.ID.String())...)
 			}
-			parent, err := client.GetChannel(ctx, channel.ParentID)
+			parent, err := client.Channel(channel.ParentID).Get()
 			if err != nil {
 				return append(diags, diag.Errorf("Can't sync permissions with category. Channel (%s) doesn't have a category", channel.ID.String())...)
 			}
@@ -286,7 +286,7 @@ func resourceChannelDelete(ctx context.Context, d *schema.ResourceData, m interf
 	var diags diag.Diagnostics
 	client := m.(*Context).Client
 
-	_, err := client.DeleteChannel(ctx, getId(d.Id()))
+	_, err := client.Channel(getId(d.Id())).Delete()
 	if err != nil {
 		return diag.Errorf("Failed to delete channel %s: %e", d.Id(), err.Error())
 	}

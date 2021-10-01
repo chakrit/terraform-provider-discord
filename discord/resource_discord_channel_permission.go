@@ -67,10 +67,10 @@ func resourceChannelPermissionCreate(ctx context.Context, d *schema.ResourceData
 	channelId := getId(d.Get("channel_id").(string))
 	overwriteId := getId(d.Get("overwrite_id").(string))
 
-	err := client.UpdateChannelPermissions(ctx, channelId, overwriteId, &disgord.UpdateChannelPermissionsParams{
+	err := client.Channel(channelId).UpdatePermissions(overwriteId, &disgord.UpdateChannelPermissionsParams{
 		Allow: disgord.PermissionBit(d.Get("allow").(uint64)),
 		Deny:  disgord.PermissionBit(d.Get("deny").(uint64)),
-		Type:  d.Get("type").(string),
+		Type:  d.Get("type").(uint),
 	})
 
 	if err != nil {
@@ -89,13 +89,13 @@ func resourceChannelPermissionRead(ctx context.Context, d *schema.ResourceData, 
 	channelId := getId(d.Get("channel_id").(string))
 	overwriteId := getId(d.Get("overwrite_id").(string))
 
-	channel, err := client.GetChannel(ctx, channelId)
+	channel, err := client.Channel(channelId).Get()
 	if err != nil {
 		return diag.Errorf("Failed to find channel %s: %s", channelId.String(), err.Error())
 	}
 
 	for _, x := range channel.PermissionOverwrites {
-		if x.Type == d.Get("type").(string) && x.ID == overwriteId {
+		if x.Type == disgord.PermissionOverwriteType(d.Get("type").(uint8)) && x.ID == overwriteId {
 			d.Set("allow", uint64(x.Allow))
 			d.Set("deny", uint64(x.Deny))
 			break
@@ -112,10 +112,10 @@ func resourceChannelPermissionUpdate(ctx context.Context, d *schema.ResourceData
 	channelId := getId(d.Get("channel_id").(string))
 	overwriteId := getId(d.Get("overwrite_id").(string))
 
-	err := client.UpdateChannelPermissions(ctx, channelId, overwriteId, &disgord.UpdateChannelPermissionsParams{
+	err := client.Channel(channelId).UpdatePermissions(overwriteId, &disgord.UpdateChannelPermissionsParams{
 		Allow: disgord.PermissionBit(d.Get("allow").(uint64)),
 		Deny:  disgord.PermissionBit(d.Get("deny").(uint64)),
-		Type:  d.Get("type").(string),
+		Type:  d.Get("type").(uint),
 	})
 
 	if err != nil {
@@ -131,7 +131,7 @@ func resourceChannelPermissionDelete(ctx context.Context, d *schema.ResourceData
 
 	channelId := getId(d.Get("channel_id").(string))
 	overwriteId := getId(d.Get("overwrite_id").(string))
-	err := client.DeleteChannelPermission(ctx, channelId, overwriteId)
+	err := client.Channel(channelId).DeletePermission(overwriteId)
 
 	if err != nil {
 		return diag.Errorf("Failed to delete channel permissions %s: %s", channelId.String(), err.Error())

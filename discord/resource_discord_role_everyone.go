@@ -52,7 +52,7 @@ func resourceRoleEveryoneRead(ctx context.Context, d *schema.ResourceData, m int
 	serverId := getId(d.Get("server_id").(string))
 	d.SetId(serverId.String())
 
-	server, err := client.GetGuild(ctx, serverId)
+	server, err := client.Guild(serverId).Get()
 	if err != nil {
 		return diag.Errorf("Failed to fetch server %s: %s", serverId.String(), err.Error())
 	}
@@ -73,7 +73,7 @@ func resourceRoleEveryoneUpdate(ctx context.Context, d *schema.ResourceData, m i
 
 	serverId := getId(d.Get("server_id").(string))
 	d.SetId(serverId.String())
-	builder := client.UpdateGuildRole(ctx, serverId, serverId)
+	builder := client.Guild(serverId).Role(serverId).UpdateBuilder()
 
 	builder.SetPermissions(disgord.PermissionBit(d.Get("permissions").(uint64)))
 

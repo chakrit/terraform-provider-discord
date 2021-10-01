@@ -76,12 +76,12 @@ func resourceRoleCreate(ctx context.Context, d *schema.ResourceData, m interface
 	client := m.(*Context).Client
 
 	serverId := getId(d.Get("server_id").(string))
-	server, err := client.GetGuild(ctx, serverId)
+	server, err := client.Guild(serverId).Get()
 	if err != nil {
 		return diag.Errorf("Server does not exist with that ID: %s", serverId)
 	}
 
-	role, err := client.CreateGuildRole(ctx, serverId, &disgord.CreateGuildRoleParams{
+	role, err := client.Guild(serverId).CreateRole(&disgord.CreateGuildRoleParams{
 		Name:        d.Get("name").(string),
 		Permissions: uint64(d.Get("permissions").(uint64)),
 		Color:       uint(d.Get("color").(uint)),
@@ -104,7 +104,7 @@ func resourceRoleRead(ctx context.Context, d *schema.ResourceData, m interface{}
 	client := m.(*Context).Client
 
 	serverId := getId(d.Get("server_id").(string))
-	server, err := client.GetGuild(ctx, serverId)
+	server, err := client.Guild(serverId).Get()
 	if err != nil {
 		return diag.Errorf("Failed to fetch server %s: %s", serverId.String(), err.Error())
 	}
@@ -129,7 +129,7 @@ func resourceRoleUpdate(ctx context.Context, d *schema.ResourceData, m interface
 	client := m.(*Context).Client
 
 	serverId := getId(d.Get("server_id").(string))
-	server, err := client.GetGuild(ctx, serverId)
+	server, err := client.Guild(serverId).Get()
 	if err != nil {
 		return diag.Errorf("Failed to fetch server %s: %s", serverId.String(), err.Error())
 	}
@@ -140,7 +140,7 @@ func resourceRoleUpdate(ctx context.Context, d *schema.ResourceData, m interface
 		return diag.Errorf("Failed to fetch role %s: %s", d.Id(), err.Error())
 	}
 
-	builder := client.UpdateGuildRole(ctx, serverId, roleId)
+	builder := client.Guild(serverId).Role(roleId).UpdateBuilder()
 
 	builder.SetName(d.Get("name").(string))
 	if _, v := d.GetChange("color"); v.(int) > 0 {
@@ -172,7 +172,7 @@ func resourceRoleDelete(ctx context.Context, d *schema.ResourceData, m interface
 	serverId := getId(d.Get("server_id").(string))
 	roleId := getId(d.Id())
 
-	err := client.DeleteGuildRole(ctx, serverId, roleId)
+	err := client.Guild(serverId).Role(roleId).Delete()
 	if err != nil {
 		return diag.Errorf("Failed to delete role: %s", err.Error())
 	}

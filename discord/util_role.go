@@ -57,7 +57,7 @@ func findRoleById(array []*disgord.Role, id disgord.Snowflake) *disgord.Role {
 }
 
 func getRole(ctx context.Context, client *disgord.Client, serverId disgord.Snowflake, roleId disgord.Snowflake) (*disgord.Role, error) {
-	roles, err := client.GetGuildRoles(ctx, serverId)
+	roles, err := client.Guild(serverId).GetRoles()
 	if err != nil {
 		return nil, err
 	}
